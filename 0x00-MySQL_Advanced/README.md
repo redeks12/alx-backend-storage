@@ -12,3 +12,5 @@ Tasks
 ### `9. Optimize search and score`
 ### `10. Safe divide`
 ### `11. No table for a meeting`
+### `12. Average weighted score`
+### `13. Average weighted score for all!`
