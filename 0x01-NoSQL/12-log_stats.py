@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""0x01. NoSQL"""
+"""Log stats module"""
 from pymongo import MongoClient
+
 
 if __name__ == "__main__":
     client = MongoClient("mongodb://127.0.0.1:27017")
     db = client.logs.nginx
+
     num_logs = db.count_documents({})
     print(f"{num_logs} logs")
 
