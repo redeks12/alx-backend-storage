@@ -1,18 +1,30 @@
 #!/usr/bin/env python3
-"""0x01. NoSQL"""
+"""A Python function that returns all students sorted by average score"""
 
-list_all = __import__("8-all").list_all
+from pymongo import MongoClient
 
 
 def top_students(mongo_collection):
-    """Write a Python function that returns all students sorted by average score"""
-    arrs = mongo_collection.find()
-    news = []
-    for i in arrs:
-        bb = 0
-        for a in i.get("topics"):
-            bb += a.get("score")
+    """Returns all students sorted by average score"""
+    students = mongo_collection.find()
 
-        i["averageScore"] = bb / len(i)
-        news.append(i)
-    return sorted(news, key=lambda x: x["averageScore"], reverse=True)
+    student_scores = []
+
+    for student in students:
+        if "topics" in student:
+            scores = [topic.get("score", 0) for topic in student["topics"]]
+            average_score = sum(scores) / len(scores) if len(scores) > 0 else 0
+            student_scores.append(
+                {
+                    "_id": student.get("_id"),
+                    "name": student.get("name"),
+                    "topics": student.get("topics"),
+                    "averageScore": average_score,
+                }
+            )
+
+    sorted_students = sorted(
+        student_scores, key=lambda x: x["averageScore"], reverse=True
+    )
+
+    return sorted_students
