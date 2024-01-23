@@ -13,6 +13,6 @@ def top_students(mongo_collection):
         for a in i.get("topics"):
             bb += a.get("score")
 
-        i["averageScore"] = bb / 3
+        i["averageScore"] = bb / len(i)
         news.append(i)
     return sorted(news, key=lambda x: x["averageScore"], reverse=True)
