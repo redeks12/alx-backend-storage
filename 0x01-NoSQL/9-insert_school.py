@@ -4,4 +4,5 @@
 
 def insert_school(mongo_collection, **kwargs):
     """Write a Python function that inserts a new document in a collection based on kwargs"""
-    mongo_collection.insert_one(kwargs)
+    result = mongo_collection.insert_one(kwargs)
+    return result._id
