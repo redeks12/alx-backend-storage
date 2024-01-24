@@ -1,40 +1,36 @@
 #!/usr/bin/env python3
-"""0x02. Redis basic"""
-
+"""
+Caching request module
+"""
+import redis
+import requests
 from functools import wraps
 from typing import Callable
 
-import requests
-from redis import Redis
 
+def track_get_page(fn: Callable) -> Callable:
+    """Decorator for get_page"""
 
-def count(func: Callable) -> Callable:
-    """Count the number of times a callable"""
-
-    @wraps(func)
+    @wraps(fn)
     def wrapper(url: str) -> str:
-        """Count the number of times a"""
-        red = Redis()
-        red.incr(f"count:{url}")
-        cached_page = red.get(url)
+        """Wrapper that:
+        - check whether a url's data is cached
+        - tracks how many times get_page is called
+        """
+        client = redis.Redis()
+        client.incr(f"count:{url}")
+        cached_page = client.get(f"{url}")
         if cached_page:
             return cached_page.decode("utf-8")
-        res = func(url)
-        red.set(url, res, 10)
-
-        return res
+        response = fn(url)
+        client.set(f"{url}", response, ex=10)
+        return response
 
     return wrapper
 
 
+@track_get_page
 def get_page(url: str) -> str:
-    """Implementing an expiring web cache and tracker"""
-
+    """Makes a http request to a given endpoint"""
     response = requests.get(url)
     return response.text
-
-
-get_page("http://slowwly.robertomurray.co.uk")
-
-red = Redis()
-print(red.get("count:http://slowwly.robertomurray.co.uk"))
