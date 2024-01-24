@@ -2,7 +2,7 @@
 """0x02. Redis basic"""
 
 from functools import wraps
-from typing import Any, Callable, Union
+from typing import Callable, Union, Any
 from uuid import uuid4
 
 import redis
@@ -12,12 +12,24 @@ def count_calls(func: Callable) -> Callable:
     """decorator for counting calls"""
 
     @wraps(func)
-    def ans(self: Any, *args, **kwargs) -> str:
+    def wrapper(self, *args, **kwargs) -> str:
         """adds a new call to the db"""
         self._redis.incr(func.__qualname__)
         return func(self, *args, **kwargs)
 
-    return ans
+    return wrapper
+
+
+def call_history(func: Callable) -> Callable:
+    """decorator for counting calls"""
+
+    @wraps(func)
+    def wrapper(self: Any, *args, **kwargs) -> str:
+        """adds a new call to the db"""
+        self._redis.incr(func.__qualname__)
+        return func(self, *args, **kwargs)
+
+    return wrapper
 
 
 class Cache:
