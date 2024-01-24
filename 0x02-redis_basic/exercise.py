@@ -15,7 +15,7 @@ def count_calls(func: Callable) -> Callable:
     def ans(self: Any, *args, **kwargs) -> str:
         """adds a new call to the db"""
         self._redis.incr(func.__qualname__)
-        return func(*args, **kwargs)
+        return func(self, *args, **kwargs)
 
     return ans
 
