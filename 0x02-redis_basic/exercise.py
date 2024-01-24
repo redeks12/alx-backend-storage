@@ -42,7 +42,7 @@ def replay(func: Callable) -> None:
     _redis = redis.Redis()
     outputs = _redis.lrange(f"{func.__qualname__}:outputs", 0, -1)
     inputs = _redis.lrange(f"{func.__qualname__}:inputs", 0, -1)
-    print(f"{func.__qualname__} was called {len(outputs)} times")
+    print(f"{func.__qualname__} was called {len(outputs)} times:")
     for i, o in zip(inputs, outputs):
         print(f"{func.__qualname__}(*{i.decode('utf-8')}) -> {o.decode('utf-8')}")
 
