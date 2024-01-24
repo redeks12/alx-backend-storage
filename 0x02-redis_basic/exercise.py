@@ -80,10 +80,3 @@ class Cache:
     def get_int(self, key):
         # Use get method with int conversion function
         return self.get(key, fn=lambda x: int(x) if x else None)
-
-
-cache = Cache()
-cache.store("foo")
-cache.store("bar")
-cache.store(42)
-replay(cache.store)
