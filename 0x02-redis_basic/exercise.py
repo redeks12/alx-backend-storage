@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 """0x02. Redis basic"""
 
-from typing import Callable, Union
-from uuid import uuid4
 from functools import wraps
+from typing import Any, Callable, Union
+from uuid import uuid4
+
 import redis
 
 
 def count_calls(func: Callable) -> Callable:
+    """decorator for counting calls"""
+
     @wraps(func)
-    def ans(*args, **kwargs):
-        val = args[0]
-        val._redis.incr(func.__qualname__)
+    def ans(self: Any, *args, **kwargs) -> str:
+        """adds a new call to the db"""
+        self._redis.incr(func.__qualname__)
         return func(*args, **kwargs)
 
     return ans
