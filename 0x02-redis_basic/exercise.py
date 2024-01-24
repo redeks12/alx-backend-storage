@@ -36,6 +36,17 @@ def call_history(func: Callable) -> Callable:
     return wrapper
 
 
+def replay(func: Callable) -> None:
+    """In this tasks, we will implement a replay
+    function to display the history of calls of a particular function."""
+    _redis = redis.Redis()
+    outputs = _redis.lrange(f"{func.__qualname__}:outputs", 0, -1)
+    inputs = _redis.lrange(f"{func.__qualname__}:inputs", 0, -1)
+    print(f"{func.__qualname__} was called {len(outputs)} times")
+    for i, o in zip(inputs, outputs):
+        print(f"{func.__qualname__}(*{i.decode('utf-8')}) -> {o.decode('utf-8')}")
+
+
 class Cache:
     """Cache implementation"""
 
@@ -69,3 +80,10 @@ class Cache:
     def get_int(self, key):
         # Use get method with int conversion function
         return self.get(key, fn=lambda x: int(x) if x else None)
+
+
+cache = Cache()
+cache.store("foo")
+cache.store("bar")
+cache.store(42)
+replay(cache.store)
